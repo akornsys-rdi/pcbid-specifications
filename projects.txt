@@ -1,0 +1,5 @@
+# File to manage the different project identifiers for PCBID
+# Keep sorted in ascending order according to K85 Charset
+# Syntax: `pppp    # Project name @ Author name (ISO3166-1-a2 country code)`
+
+";Br    # Foobar Project @ Foobar Inc (sample project)
