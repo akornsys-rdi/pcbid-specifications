@@ -44,12 +44,12 @@ The canonical structure of the fields is designed in the form of dependency, so 
 This is how PCBID is composed:
 
         ~aaaappppmmrrwwyy       ~64M]";Br01011520
-         aaaa                    64M]               Autor       Foobar Inc
-             pppp                    ";Br           Proyecto    Foobar Project
-                 mm                      01         Módulo      1
-                   rr                      01       Versión     1
-                     ww                      15     Semana      15
-                       yy                      20   Año         2020
+         aaaa                    64M]               Author      Foobar Inc
+             pppp                    ";Br           Project     Foobar Project
+                 mm                      01         Module      1
+                   rr                      01       Release     1
+                     ww                      15     Week        15
+                       yy                      20   Year        2020
 
 ### 2D Barcode
 
