@@ -1,47 +1,47 @@
-# Especificaciones de PCBID V2.0 - Borrador
+# PCBID V2.0 specifications - Draft
 
 ![Akornsys RDI](https://github.com/akornsys-rdi/pcbid-specifications/raw/master/doc/img/akornsys-logo.png)
 
-## :rocket: Descripción e intención
+## :rocket: Description and purpose
 
-PCBID es un sistema de numeración única para PCB diseñado para generar **códigos únicos** que identifican las PCB y permiten su **trazabilidad**. Esta numeración ha sido concebida para ser un sistema robusto, **usable ante cualquier escenario**. Además **aporta información útil** para el usuario, asegurando una **buena legibilidad** de la numeración.
+PCBID is a unique numbering system for PCBs designed to generate **unique codes** that identify PCBs and allow their **traceability**. This numbering has been conceived to be a robust system, **usable in any scenario**. It also **provides useful information** for the user, ensuring a **good readability** of the numbering.
 
-El sistema se ha ideado para aportar una **alta compresión de datos**, creando un **código suficientemente corto** como para ser insertado incluso en las PCB más pequeñas. Y el proceso de generación, así como el de sobreimpresión permiten ser **procesos automatizados** con herramientas externas. De esta menera, se permiten en la versión actual más de 50 millones de autores, con un total de más 2700 billones de proyectos únicos.
+The system has been designed to provide a **high data compression**, creating a **code short enough** to be inserted in even the smallest PCB. And the generation process, as well as the overlay process, allows to be **automated processes** with external tools. In this way, more than 50 million authors are allowed in the current version, with a total of more than 2700 billion unique projects.
 
-### Tamaño recomendado en serigrafía
+### Recommended silkscreen size
 
-Del mismo modo que no hay una única forma de hacer una PCB, no hay un tamaño único que se considere bueno para la impresión del PCBID en una PCB. Sin embargo, sí consideramos que para mantener una buena legibilidad, no debería ser menor de 30x6mil.
+Just as there is no single way to make a PCB, there is no single size that is considered good for printing PCBID on a PCB. However, we consider that in order to maintain good readability, it should not be less than 30x6mil.
 
 ### Character set
 
-PCBID usa codificación en K85, una variante de ASCII85 que reemplaza algunos caracteres similares por otros, para evitar confusiones tipográficas.
+PCBID uses K85 encoding, an ASCII85 variant that replaces some similar characters with others, to avoid typographical confusion.
 
-K85 consta del siguiente charset:
+K85 consists on the following charset:
 
         0 1 2 3 4 5 6 7 8 9 A B C D E F G H J K L M N P Q R S T U V W X Y Z
         a b c d e f g h i j k l m n p q r s t u v w x y z ! # $ % & ( ) * +
         - ; < = > ? @ ^ _ { } [ ] / \ : "
 
-Este charset ha sido considerado con cuidado. De esta forma queda excluído:
-- `"I"` y `"|"`, capaz de confundirse con `"1"`, `"i"` y `"l"`.
-- `"O"` y `"o"`, capaz de confundirse con `"0"` y `"Q"`.
-- ``"`"`` y `"'"` que son demasiado pequeñas y pueden no ser legibles en serigrafía.
-- `" "` por ser caracter no imprimible.
-- `"~"` que puede ser usado como indicador de PCBID al usarse delante de éste.
+This charset has been carefully considered. It is thus excluded:
+- `"I"` and `"|"`, capable of being confused with `"1"`, `"i"` and `"l"`.
+- `"O"` and `"o"`, capable of being confused with `"0"` and `"Q"`.
+- ``"`"`` and `"'"` that are too small and may not be legible in silkscreen.
+- `" "` for being a non-printable character.
+- `"~"` which can be used as a PCBID indicator when used in front of it.
 
-### Descripción de campos
+### Description of fields
 
-El código de PCBID consta de seis campos:
-- Autor: Identificador de la persona u organizacion que desarrolla la PCB.
-- Proyecto: Identificador del proyecto desarrollado por el autor.
-- Módulo: Numeración del número de placa que pertenece al proyecto. El campo empieza en 01.
-- Versión: Numeración de la versión del presente módulo. El campo empieza en 01.
-- Semana: Semana de diseño de la PCB.
-- Año: Año de diseño de la PCB.
+The PCBID code consists of six fields:
+- Author: Identifier of the person or organization developing the PCB.
+- Project: Identifier of the project developed by the author.
+- Module: Numbering of the board number that belongs to the project. The field starts with 01.
+- Release: Numbering of the release of this module. The field starts with 01.
+- Week: Week of layout of the PCB.
+- Year: Year of layout of the PCB.
 
-La estructura canónica de los campos está diseñada en forma de dependecia, por lo que el campo a la derecha y sucesivos son dependientes del campo anterior. De esta forma los campos pueden leerse en el orden opuesto: _Fecha de diseño_ DE _la versión_ DE _el módulo_ DE _el proyecto_ DE _el autor_. Un cambio en un campo obliga al reinicio de los campos sucesivos.
+The canonical structure of the fields is designed in the form of dependency, so the field on the right and successive fields are dependent on the previous field. This way the fields can be read in the opposite order: _Design date_ OF _the version_ OF _the module_ OF _the project_ OF _the author_. A change in one field forces the resetting of the successive fields.
 
-De esta forma PCBID queda así constituído:
+This is how PCBID is composed:
 
         ~aaaappppmmrrwwyy       ~64M]";Br01011520
          aaaa                    64M]               Autor       Foobar Inc
@@ -53,93 +53,93 @@ De esta forma PCBID queda así constituído:
 
 ### 2D Barcode
 
-La numeración de PCBID también puede ser codificada en formato de código de barras para ser añadida en la serigrafía de la PCB. El formato de código de barras para la codificación del PCBID es **datamatrix**. Es altamente recomendable añadir el código PCBID en texto en una ubicación próxima al código de barras siempre que sea posible. Da buen resultado generarlo en colores invertidos y con un tamaño en PCB no inferior a 6mm, siempre y cuando el color de la máscara ofrezca suficiente contraste.
+The numbering of PCBIDs can also be encoded in barcode format to be added in the silkscreen of the PCB.The barcode type for PCBID coding is **datamatrix**. It is highly recommended to add the PCBID code in text in a location close to the barcode whenever possible. It works well to generate it in inverted colors and with a size in PCB not less than 6mm, as long as the color of the mask offers enough contrast.
 
-### ¿Cuándo debo generarlo?
+### When should I generate it?
 
-Con el fin de que la fecha embebida en el código PCBID sea válida, ha de ser generado e insertado una vez finalizada la PCB, en el momento previo a generar los archivos de fabricación. Este código tendrá validez y no deberá ser actualizado hasta el siguiente cambio en la PCB.
+In order for the date embedded in the PCBID code to be valid, it must be generated and inserted once the PCB is finished, at the moment prior to generating the manufacturing files. This code will be valid and should not be updated until the next change in the PCB.
 
-### Ejemplos de uso
+### Examples of use
 
-#### Caso 1: Primera PCB
+#### Case 1: First PCB
 
-1. Genera tu identificador de autor a partir del nombre de autor que desees (nombre personal o de marca). Ej. `64M]` para `Foobar Inc`.
-2. Genera tu identificador de proyecto a partir del nombre del proyecto. Ej. `";Br` para `Foobar Project`.
-3. Establece los campos de módulo y versión a `01`.
-4. Calcula la semana actual siguiendo el modelo ISO 8601 (`%V` en sintaxis `date`). Ej. `15` para `11/04/20`.
-5. Añade las últimas dos cifras del año para el campo año. Ej: `20` para `2020`.
-6. Concatena los campos, de esta manera ha de quedar: `64M]";Br01011520`.
-7. Inserta el PCBID en la PCB. Puedes insertar `~` al inicio para indicar que se trata de un PCBID. `~64M]";Br01011520`.
+1. Generate your author identifier from the author name you want (personal or brand name). E.g. `64M]` for `Foobar Inc`.
+2. Generate your project identifier from the project name. E.g. `";Br` for `Foobar Project`.
+3. Sets the module and release fields to `01`.
+4. Calculate the current week following the ISO 8601 model (`%V` in `date` syntax). E.g. `15` for `2020-04-11`.
+5. Add the last two digits of the year for the year field. E.g: `20` for `2020`.
+6. Concatenate the fields, this way it has to look like this: `64M]";Br01011520`.
+7. Insert the PCBID on the PCB. You can insert `~` at the beginning to indicate that it is a PCBID. `~64M]";Br01011520`.
 
-#### Caso 2: Segunda versión de la PCB
+#### Case 2: Second version of the PCB
 
-1. Coge el PCBID que tenía asignado la versión anterior de esta PCB. Ej: `~64M]";Br01011520`.
-2. Incrementa en una unidad, siguiendo el esquema de caracteres K85, el campo versión. Ej: `~64M]";Br01021520`.
-3. Recalcula la fecha cuando hayas finalizado los cambios de la segunda versión de la PCB. Ej: `~64M]";Br01021820`.
-4. Inserta el PCBID en la PCB.
+1. Take the PCBID that was assigned to the previous version of this PCB. E.g: `~64M]";Br01011520`.
+2. Increase by one unit, following the K85 charset, the release field. E.g: `~64M]";Br01021520`.
+3. Recalculate the date when you have completed the changes to the second version of the PCB. E.g: `~64M]";Br01021820`.
+4. Insert the PCBID on the PCB.
 
-#### Caso 3: Nueva placa en el mismo proyecto
+#### Case 3: New board in the same project
 
-1. Coge los campos autor y proyecto que tenías generados de este proyecto. Ej: `64M]";Br`.
-2. Incrementa en una unidad, siguiendo el esquema de caracteres K85, el campo módulo. Ej: `02`.
-3. Reinicia el campo versión, dado que es la primera versión de esta PCB. Ej: `01`.
-4. Cuando hayas acabado el diseño, calcula los campos de fecha. Ej: `2120`.
-5. Concatena los campos, de esta manera ha de quedar: `~64M]";Br02012120`.
-6. Inserta el PCBID en la PCB. De esta manera tu proyecto con identificador `";Br` consta de la presente PCB con PCBID `~64M]";Br02012120` y de otra PCB en su segunda versión con PCBID `~64M]";Br01021820`.
+1. Take the author and project fields you had generated from this project. E.g: `64M]";Br`.
+2. Increase by one unit, following the K85 charset, the module field. E.g: `02`.
+3. Restart the release field, as this is the first release of this PCB. E.g: `01`.
+4. When you have finished the design, calculate the date fields. E.g: `2120`.
+5. Concatenate the fields, this way it has to look like this: `~64M]";Br02012120`.
+6. Insert the PCBID on the PCB. In this way your project with identifier `";Br` consists of the present PCB with PCBID `~64M]";Br02012120` and another PCB in its second version with PCBID `~64M]";Br01021820`.
 
 ### FAQ
 
-> **Hace un tiempo diseñé y fabriqué unas PCB con PCBID, ahora quiero fabricar más PCB a partir de los mismos archivos de fabricación. ¿Debo actualizar el PCBID?**
+> **Some time ago I designed and manufactured some PCBs with PCBID, now I want to manufacture more PCBs from the same manufacturing files. Should I update the PCBID?**
 > 
-> En el uso habitual de PCBID no es necesario actualizar la numeración. No obstante, si es un evento que necesitas registrar para la trazabilidad, es legítimo el incremento del campo versión en una unidad cada vez que se vayan a fabricar nuevas PCB.
+> In the regular use of PCBIDs it is not necessary to update the numbering. However, if it is an event that you need to record for traceability, it is legitimate to increase the release field by one unit each time new PCBs are to be manufactured.
 
-> **He diseñado un proyecto de varias placas y todas ellas tienen PCBID. He creado una segunda versión de una de ellas, ¿tengo que actualizar el PCBID en todas?**
+> **I have designed a project of several boards and all of them have PCBID. I have created a second version of one of them, do I have to update the PCBID in all of them?**
 > 
-> No, sólo necesitas actualizar el campo versión incrementando una unidad en la placa de la que has creado una segunda versión.
+> No, you only need to update the release field by increasing a unit on the board from which you have created a second version.
 
-> **¿Debo actualizar el PCBID si había diseñado una PCB y después de un tiempo realizo cambios, sin haber fabricado ninguna unidad de esta PCB?**
+> **Should I update the PCBID if I had designed a PCB and after some time I make changes, without having manufactured any unit of this PCB?**
 > 
-> No. Realiza todos los cambios necesarios y mantén el PCBID que tuvieses generado.
+> No. Make all the necessary changes and keep the PCBID you have generated.
 
-> **¿Puedo usar este sistema para la carcasa o hardware que no sean PCB de mi proyecto?**
+> **Can I use this system for the non-PCB housing or hardware of my project?**
 > 
-> No es la intención de PCBID y probablemente no sea la opción más conveniente. Los procesos de fabricación de PCB distan mucho de otros procesos de fabricación de otro hardware, y es posible que sea necesario realizar trazabilidades de este hardware de forma diferente que con las PCB. En cualquier caso eres libre de usarlo si así lo deseas.
+> It is not the intention of the PCBID and it is probably not the most convenient option. PCB manufacturing processes are far away from other hardware manufacturing processes, and this hardware may need to be traced in a different way than with PCBs. In any case you are free to use it if you wish.
 
-> **¿Cómo puede tener trazabilidad si todas las PCB fabricadas a partir de los mismos archivos de fabricación tienen el mismo PCBID?**
+> **How it can have traceability if all the PCBs manufactured from the same manufacturing files have the same PCBID?**
 > 
-> PCBID se sustenta en la idea de que todas las placas fabricadas a partir de los mismos archivos de fabricación son virtualmente idénticas, por lo que todos los eventos de trazabilidad les afectan por igual. Por tanto se enfoca más en los cambios que sufre una PCB desde la versión early proto hasta la final que en aquellos eventos individuales. No obstante, sabemos que hay situaciones en las que es necesario llevar control de trazabilidad de forma individual, para ese caso recomendamos añadir otro sistema de numeración de forma paralela, como pueden ser pegatinas numeradas.
+> PCBID is based on the idea that all boards manufactured from the same manufacturing files are virtually identical, so all traceability events affect them equally. It therefore focuses more on the changes a PCB undergoes from the early proto to the final version than on those individual events. However, we know that there are situations in which it is necessary to keep track of traceability on an individual basis, in which case we recommend adding another numbering system in parallel, such as numbered stickers.
 
-> **¿Cómo evita el sistema posibles colisiones de identificador de autor o proyecto?**
+> **How does the system avoid possible collisions of author or project identifiers?**
 > 
-> La comprobación de colisiones se realiza actualmente de forma manual, aunque está prevista su automatización con herramientas externas y con la implementación de PCBDB. No obstante, no es algo preocupante dado que la colisión de estos campos es poco probable en esta fase de desarrollo.
+> Collision checking is currently done manually, although automation with external tools and the implementation of PCBDB is planned. However, this is not a cause for concern since the collision of these fields is unlikely at this stage of development.
 
-> **¿Qué es PCBDB?**
+> **What is PCBDB?**
 > 
-> Es un proyecto relacionado con PCBID que se desarrollará en un futuro y permitirá ser base de datos de los eventos de trazabilidad de aquellas placas registradas que usen PCBID. Además, permitirá enlazar especificaciones y documentación útil de dichas placas.
+> It is a project related to PCBID that will be developed in the future and will allow it to be a database of the traceability events of those registered boards that use PCBID. In addition, it will allow to link specifications and useful documentation of these boards.
 
-> **¿Puedo usar este sistema para mis proyectos de software?**
+> **Can I use this system for my software projects?**
 > 
-> No es la intención de PCBID y probablemente no sea la opción más conveniente. Los sistemas de control de versión de software aportan sus propias ventajas e incluyen sus propios sistemas de trazabilidad. En cualquier caso eres libre de usarlo si así lo deseas.
+> It is not the intention of the PCBID and it is probably not the most convenient option. Software version control systems bring their own advantages and include their own traceability systems. In any case you are free to use it if you wish.
 
-> **Mi proyecto ha cambiado de nombre, ¿debo de cambiar el campo de proyecto del PCBID?**
+> **My project has changed name, should I change the project field of the PCBID?**
 > 
-> Si aún no has fabricado ninguna PCB de este proyecto con el nombre antiguo, genera el PCBID con el nombre nuevo de proyecto. Sin embargo, si ya has fabricado PCB del proyecto con el nombre antiguo y tiene asignado un PCBID, deberías mantener el identificador de proyecto del PCBID que ya tienes generado para las placas con el nombre de proyecto nuevo, por razones de trazabilidad. Si la razón del cambio de nombre del proyecto es por un cambio estructural del proyecto, quizá sí deberías tratarlo como un proyecto nuevo y generar su propio identificador de proyecto. En última instancia queda a tu discrección.
+> If you have not yet manufactured any PCBs from this project with the old name, generate the PCBID with the new project name. However, if you have already manufactured PCBs of the project with the old name and it has a PCBID assigned, you should keep the project identifier of the PCBID you have already generated for the boards with the new project name, for traceability reasons. If the reason for the project name change is a structural change of the project, maybe you should treat it as a new project and generate your own project identifier. Ultimately it's up to you.
 
-> **¿Por qué este sistema de numeración y no cualquier otro?**
+> **Why this numbering system and not any other?**
 > 
-> En el mundo de fabricación de PCB hay numerosos sistemas de numeración con la intención de tener trazabilidad, pero ninguno de ellos es estándar y su ámbito suele ser uso interno de cada empresa u organización. Por ello se ha diseñado PCBID, para crear unas especificaciones estándar que pueda ser adoptado por todo el que pueda estar interesado. Además, esto permite crear una base de datos de todas aquellas que usen un mismo sistema (PCBDB). Por supuesto eres libre de usar el sistema que más de convenzca.
+> In the world of PCB manufacturing there are numerous numbering systems with the intention of having traceability, but none of them are standard and their scope is usually for internal use by each company or organization. Therefore, PCBID has been designed to create standard specifications that can be adopted by anyone who might be interested. In addition, this allows the creation of a database of all those using the same system (PCBDB). Of course you are free to use the system that suits you best.
 
-> **Estoy diseñando un ecosistema de proyectos que consta de varias PCB. ¿Debería cambiar el campo de proyecto o el de módulo para cada una de ellas?**
+> **I am designing a project ecosystem consisting of several PCBs, should I change the project field or the module field for each of them?**
 > 
-> Depende. Es una cuestión semántica, pero si se puede entender que cada placa es un proyecto en sí mismo y no requiere otras de su ecosistema para funcionar probablemente debas cambiar el campo de proyecto. Por ejemplo diferentes tarjetas de un sintetizador de rack, la agrupación de ellas forman una unidad pero cada una es autónoma por separado. Si por el contrario hay cierta dependecia entre las diferentes placas para poder funcionar probablemente debar cambiar el campo de módulo. Por ejemplo una placa principal con un conjunto de placas de expansión. En última instancia queda a tu discrección.
+> It depends. It's a semantic issue, but if you can understand that each board is a project in itself and doesn't require others from its ecosystem to function you should probably change the project field. For example different cards of a rack synthesizer, the grouping of them forms a unit but each one is autonomous separately. If, on the other hand, there is a certain dependency between the different boards in order to work, you probably have to change the module field. For example a main board with an set of expansion boards. Ultimately it's up to you.
 
-> **Voy a fabricar una copia de una PCB diseñada por otra persona y que contiene PCBID, ¿debo mantenerlo?**
+> **I'm going to make a copy of a PCB designed by someone else and containing PCBID, should I keep it?**
 > 
-> En general es una buena práctica conservarlo, pues de esta manera se puede acceder al historial de trazabilidad del autor original y se reconoce la autoría del proyecto, que siempre está bien. En caso de que no desees esto, puedes eliminarlo o regenerarlo con tu propio identificador de autor, mantener el campo de proyecto y reiniciar el campo de versión.
+> In general it is a good practice to keep it, as this way the traceability history of the original author can be accessed and the authorship of the project recognized, which is always good. If you don't want this, you can delete it or regenerate it with your own author identifier, keep the project field and restart the release field.
 
-> **He diseñado una PCB muy pequeña y no me entra el PCBID, ¿puedo acortarlo?**
+> **I designed a very small PCB and I can't fit the PCBID, can I shorten it?**
 > 
-> No. Todos los campos que forman PCBID tienen relevancia y no se pueden descartar algunos. Puedes reducir el tamaño de fuente al mínimo recomendado o si ya lo has hecho puedes considerar otras opciones, como insertarlo en dos líneas, o quizá insertarlo en formato datamatrix. Si eliges ponerlo en dos líneas, has de hacerlo preferentemente con el siguiente formato:
+> No. All the fields that form PCBIDs are relevant and some cannot be ruled out. You can reduce the font size to the recommended minimum or if you have already done so you can consider other options, such as inserting it in two lines, or perhaps inserting it in datamatrix format. If you choose to put it on two lines, you should preferably do so in the following format:
 > 
 >       aaaapppp            64M]";Br
 >       mmrrwwyy            01011520
