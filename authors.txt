@@ -1,6 +1,0 @@
-# File to manage the different author identifiers for PCBID
-# Keep sorted in ascending order according to K85 Charset
-# Syntax: `aaaa    # Author name (ISO3166-1-a2 country code)`
-
-64M]    # Foobar Inc (sample author)
-a{wa    # Akornsys R&D&I (ES)
