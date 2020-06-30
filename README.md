@@ -1,4 +1,4 @@
-# PCBID V2.0 specifications - Draft
+# PCBID V2.0 specifications - 2nd Draft
 
 ![Akornsys RDI](https://github.com/akornsys-rdi/pcbid-specifications/raw/master/doc/img/akornsys-logo.png)
 
@@ -43,9 +43,9 @@ The canonical structure of the fields is designed in the form of dependency, so 
 
 This is how PCBID is composed:
 
-        ~aaaappppmmrrwwyy       ~64M]";Br01011520
-         aaaa                    64M]               Author      Foobar Inc
-             pppp                    ";Br           Project     Foobar Project
+        ~aaaappppmmrrwwyy       ~}HbHgv0?01011520
+         aaaa                    }HbH               Author      Foobar Inc
+             pppp                    gv0?           Project     Foobar Project
                  mm                      01         Module      1
                    rr                      01       Release     1
                      ww                      15     Week        15
@@ -53,39 +53,47 @@ This is how PCBID is composed:
 
 ### 2D Barcode
 
-The numbering of PCBIDs can also be encoded in barcode format to be added in the silkscreen of the PCB.The barcode type for PCBID coding is **datamatrix**. It is highly recommended to add the PCBID code in text in a location close to the barcode whenever possible. It works well to generate it in inverted colors and with a size in PCB not less than 6mm, as long as the color of the mask offers enough contrast.
+The numbering of PCBIDs can also be encoded in barcode format to be added in the silkscreen of the PCB. The barcode type for PCBID coding is **datamatrix**. It is highly recommended to add the PCBID code in text in a location close to the barcode whenever possible. It works well to generate it in inverted colors and with a size in PCB not less than 6mm, as long as the color of the mask offers enough contrast.
+
+The numbering with which the barcode is generated should not include the tilde symbol `~`, while it is recommended that it be added to the PCBID code in plain text.
 
 ### When should I generate it?
 
 In order for the date embedded in the PCBID code to be valid, it must be generated and inserted once the PCB is finished, at the moment prior to generating the manufacturing files. This code will be valid and should not be updated until the next change in the PCB.
 
+### How do I generate it?
+
+Tools for PCBID generation are provided in the [PCBID Tools](https://github.com/akornsys-rdi/pcbid-tools) repository. If you are interested in creating your own generation tool or simply to know more details, you can look at the technical details section.
+
 ### Examples of use
 
 #### Case 1: First PCB
 
-1. Generate your author identifier from the author name you want (personal or brand name). E.g. `64M]` for `Foobar Inc`.
-2. Generate your project identifier from the project name. E.g. `";Br` for `Foobar Project`.
-3. Sets the module and release fields to `01`.
+1. Generate your author identifier from the author name you want (personal or brand name). E.g. `}HbH` for `Foobar Inc`.
+2. Generate your project identifier from the project name. E.g. `gv0?` for `Foobar Project`.
+3. Set the module and release fields to `01`.
 4. Calculate the current week following the ISO 8601 model (`%V` in `date` syntax). E.g. `15` for `2020-04-11`.
 5. Add the last two digits of the year for the year field. E.g: `20` for `2020`.
-6. Concatenate the fields, this way it has to look like this: `64M]";Br01011520`.
-7. Insert the PCBID on the PCB. You can insert `~` at the beginning to indicate that it is a PCBID. `~64M]";Br01011520`.
+6. Concatenate the fields, this way it has to look like this: `}HbHgv0?01011520`.
+7. Insert the PCBID on the PCB. You can insert `~` at the beginning to indicate that it is a PCBID. `~}HbHgv0?01011520`.
 
 #### Case 2: Second version of the PCB
 
-1. Take the PCBID that was assigned to the previous version of this PCB. E.g: `~64M]";Br01011520`.
-2. Increase by one unit, following the K85 charset, the release field. E.g: `~64M]";Br01021520`.
-3. Recalculate the date when you have completed the changes to the second version of the PCB. E.g: `~64M]";Br01021820`.
+1. Take the PCBID that was assigned to the previous version of this PCB. E.g: `~}HbHgv0?01011520`.
+2. Increase by one unit, following the K85 charset, the release field. E.g: `~}HbHgv0?01021520`.
+3. Recalculate the date when you have completed the changes to the second version of the PCB. E.g: `~}HbHgv0?01021820`.
 4. Insert the PCBID on the PCB.
 
 #### Case 3: New board in the same project
 
-1. Take the author and project fields you had generated from this project. E.g: `64M]";Br`.
+1. Take the author and project fields you had generated from this project. E.g: `}HbHgv0?`.
 2. Increase by one unit, following the K85 charset, the module field. E.g: `02`.
 3. Restart the release field, as this is the first release of this PCB. E.g: `01`.
 4. When you have finished the design, calculate the date fields. E.g: `2120`.
-5. Concatenate the fields, this way it has to look like this: `~64M]";Br02012120`.
-6. Insert the PCBID on the PCB. In this way your project with identifier `";Br` consists of the present PCB with PCBID `~64M]";Br02012120` and another PCB in its second version with PCBID `~64M]";Br01021820`.
+5. Concatenate the fields, this way it has to look like this: `~}HbHgv0?02012120`.
+6. Insert the PCBID on the PCB.
+
+In this way your project with identifier `gv0?` consists of the present PCB with PCBID `~}HbHgv0?02012120` and another PCB in its second version with PCBID `~}HbHgv0?01021820`.
 
 ### FAQ
 
@@ -111,7 +119,7 @@ In order for the date embedded in the PCBID code to be valid, it must be generat
 
 > **How does the system avoid possible collisions of author or project identifiers?**
 > 
-> Collision checking is currently done manually, although automation with external tools and the implementation of PCBDB is planned. However, this is not a cause for concern since the collision of these fields is unlikely at this stage of development.
+> Collision checking can be done manually, or with external tools. In any case, automation with the implementation of PCBDB is planned. However, this is not a cause for concern since the collision of these fields is unlikely at this stage of development.
 
 > **What is PCBDB?**
 > 
@@ -141,10 +149,69 @@ In order for the date embedded in the PCBID code to be valid, it must be generat
 > 
 > No. All the fields that form PCBIDs are relevant and some cannot be ruled out. You can reduce the font size to the recommended minimum or if you have already done so you can consider other options, such as inserting it in two lines, or perhaps inserting it in datamatrix format. If you choose to put it on two lines, you should preferably do so in the following format:
 > 
->       aaaapppp            64M]";Br
+>       aaaapppp            }HbHgv0?
 >       mmrrwwyy            01011520
 
-## :book: Version history (PCBID V1.0)
+> **Can I choose the author and/or project identifier using K85 alphabet?**
+> 
+> No, these fields cannot be chosen arbitrarily and must be generated from the author and project name. This process ensures unique identifiers linked to the source name and prevents collisions.
+
+## :wrench: Technical details
+
+The PCBID generation algorithm depends on the field being generated:
+- Author and project: The author and project identifier fields are generated from the hash of the name provided. This function guarantees a correspondence between the name and the identifier, while minimizing collisions. The hash is processed to obtain a radix 85 encodable number.
+- Release and Module: These fields are the representation of the decimal number in radix 85. Since these fields will rarely exceed 09, they are kept clearly human readable.
+- Week and year: Two-digit decimal representation of the week and year. Without any coding, they are easy to read.
+
+All numbers in radix 85 are represented with the K85 charset, which provides a comfortable reading without possible confusion by similar characters.
+
+The hash function chosen for the author and project name transformation is SHA256, which provides a solid hash feature. The hash transformation algorithm is performed by breaking the hash result into 32-bit chunks, and adding these chunks together. This process has proven to have better data dispersion.
+
+        SHA256("Foobar Inc")
+                |
+                v
+        1a623c0e36fc474e6c592a3f5578e0621dffcbd452b9fa535121a75f8017dc3b
+        1a623c0e
+              + 36fc474e
+                      + 6c592a3f
+                              + 5578e062
+                                      + 1dffcbd4
+                                              + 52b9fa53
+                                                      + 5121a75f
+                                                              + 8017dc3b
+        ________________________________________________________________
+                                                              025523d7be
+
+The result is divided by the maximum possible value of the identifier (85⁴), and the remainder is converted to radix 85.
+
+             RADIX 10        RADIX 16        RADIX 85
+            10018346942     025523d7be      02 21 78 17 35 17
+        MOD    52200625       031c84b1         01 00 00 00 00
+        _____________________________________________________
+               48027567       02dcd7af            78 17 35 17
+
+The number in radix 85 is represented using the K85 charset, forming the identifier.
+
+        78 17 35 17  ->  }HbH
+
+The same process applies to the project name.
+
+## :book: Version history
+
+### PCBID V2.0 2nd Draft
+
+The changes from the 1st draft are:
+
+- Updated title to 2nd Draft
+- Edited FAQ
+- Updated sample PCBID
+- Added section for technical details
+- Added how to generate it
+- Modified barcode and pull-request sections
+- Simplified file system to a single file
+- Updated content of projects.txt
+
+### PCBID V1.0
 
 The previous version of PCBID is considered obsolete, and is retained only as documentation. This version was designed to be used by a single author as a way to generate serial numbers for personal projects
 
@@ -170,7 +237,7 @@ Please :star: or watch this repository if this project helped you! You can also 
 
 ### ¿How to Pull Request to add new PCBIDs?
 
-If you use PCBID for your own projects, please fork this repository, add your author and project data to the `authors.txt` and `projects.txt` files respectively following the instructions present in these files and make a Pull Request with the changes.
+If you use PCBID for your own projects, please fork this repository, add your author and project data to the `projects.txt` file following the instructions present in these files and make a Pull Request with the changes.
 
 ## :scroll: Copyright & License
 
