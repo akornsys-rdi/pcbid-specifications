@@ -39,6 +39,10 @@ The PCBID code consists of six fields:
 - Week: Week of layout of the PCB.
 - Year: Year of layout of the PCB.
 
+The author and project identifiers are generated from the actual names of these. An algorithm transforms them into a compact and unique identifier to form the PCBID fields.
+
+:warning: By style convention intended for the readability and accuracy of the data provided, the author name and project name fields must present full names, without unnecessary abbreviations and with the correct capitalization and punctuation.
+
 The canonical structure of the fields is designed in the form of dependency, so the field on the right and successive fields are dependent on the previous field. This way the fields can be read in the opposite order: _Design date_ OF _the version_ OF _the module_ OF _the project_ OF _the author_. A change in one field forces the resetting of the successive fields.
 
 This is how PCBID is composed:
@@ -205,6 +209,7 @@ The changes from the 1st draft are:
 - Updated title to 2nd Draft
 - Edited FAQ
 - Updated sample PCBID
+- Added paragraph about the formation of the author name and project name fields
 - Added section for technical details
 - Added how to generate it
 - Modified barcode and pull-request sections
