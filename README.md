@@ -200,6 +200,23 @@ The number in radix 85 is represented using the K85 charset, forming the identif
 
 The same process applies to the project name.
 
+In case of finding collisions with existing PCBID identifiers, `" #<NUMBER>"` is added at the end of the author or project name which causes the collision, where `<NUMBER>` will increase by one unit for each collision found. This appended is not part of the author or project name, and should not be added to the `projects.txt` file.
+
+For the author, collisions are searched only in the author identifier (first four characters of the PCBID), while for the project, collisions of the same author are searched (first eight characters of the PCBID). Therefore, the same project identifier is allowed for different authors.
+
+For example, the (new) author _Foobar Inc_ tries to generate the project identifier of _Foobar Project_. According to the `projects.txt` file, the author identifiers `}HbH` and `70@&` are already in use:
+
+        "Foobar Inc"     -> 1a623c0e..8017dc3b -> }HbH      --> COLLISION!
+        "Foobar Inc #1"  -> 0c2cdc00..bbc3a871 -> 70@&      --> COLLISION!
+        "Foobar Inc #2"  -> 82bef721..8a9a1815 -> \=EH      --> ASIGNED
+                                                    |
+                                                    v
+        "Foobar Project" -> 78160470..7b1566af -> ____ gv0? --> ASIGNED
+
+Thus, the assigned PCBID identifiers would be `\=EHgv0?`, since the first collision-free author identifier and the first collision-free project identifier for that author are used. Once an author has an assigned identifier, they must use it for all their projects. With the data from the previous example, the line inserted in `projects.txt' would look like this:
+
+        \=EHgv0?    ' Foobar Project @ Foobar Inc (ZZ)
+
 ## :book: Version history
 
 ### PCBID V2.0 2nd Draft
@@ -215,6 +232,7 @@ The changes from the 1st draft are:
 - Modified barcode and pull-request sections
 - Simplified file system to a single file
 - Updated content of projects.txt
+- Added technical details about collisions
 
 ### PCBID V1.0
 
