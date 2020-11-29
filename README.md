@@ -1,4 +1,4 @@
-# PCBID V2.0 specifications - 2nd Draft
+# PCBID V2.0 specifications - 3nd Draft
 
 ![Akornsys RDI](https://github.com/akornsys-rdi/pcbid-specifications/raw/master/doc/img/akornsys-logo.png)
 
@@ -6,7 +6,7 @@
 
 PCBID is a unique numbering system for PCBs designed to generate **unique codes** that identify PCBs and allow their **traceability**. This numbering has been conceived to be a robust system, **usable in any scenario**. It also **provides useful information** for the user, ensuring a **good readability** of the numbering.
 
-The system has been designed to provide a **high data compression**, creating a **code short enough** to be inserted in even the smallest PCB. And the generation process, as well as the overlay process, allows to be **automated processes** with external tools. In this way, more than 50 million authors are allowed in the current version, with a total of more than 2700 billion unique projects.
+The system has been designed to provide a **high data compression**, creating a **code short enough** to be inserted in even the smallest PCB. And the generation process, as well as the overlay process, allows to be **automated processes** with external tools. In this way, close to 30 million authors are allowed in the current version, with a total of almost 900 trillion unique projects.
 
 ### Recommended silkscreen size
 
@@ -14,90 +14,117 @@ Just as there is no single way to make a PCB, there is no single size that is co
 
 ### Character set
 
-PCBID uses K85 encoding, an ASCII85 variant that replaces some similar characters with others, to avoid typographical confusion.
+PCBID uses K74 encoding, an ASCII85-inspired charset that replaces or removes those characters that can be confused with others, to avoid typographical confusion.
 
-K85 consists on the following charset:
+:warning: Charset modified in the third draft of PCBID V2.0. This breaks the compatibility with previous versions and the external tools that handled the previous version.
 
-        0 1 2 3 4 5 6 7 8 9 A B C D E F G H J K L M N P Q R S T U V W X Y Z
-        a b c d e f g h i j k l m n p q r s t u v w x y z ! # $ % & ( ) * +
-        - ; < = > ? @ ^ _ { } [ ] / \ : "
+K74 consists on the following charset:
+
+        1                 10                  20                  30
+        
+        0 1 2 3 4 5 6 7 8 9 A B C E F G H J K L M N P Q R S T U V W
+        X Y Z a b c d e f g h j k l m n p q r s t u v w x y z ! # $
+        % & ( ) + - ; < = > ? _ [ ]
 
 This charset has been carefully considered. It is thus excluded:
-- `"I"` and `"|"`, capable of being confused with `"1"`, `"i"` and `"l"`.
-- `"O"` and `"o"`, capable of being confused with `"0"` and `"Q"`.
-- ``"`"`` and `"'"` that are too small and may not be legible in silkscreen.
-- `" "` for being a non-printable character.
-- `"~"` which can be used as a PCBID indicator when used in front of it.
+- `"I"`, `"|"` and `"i"`, which can be confused with , `"1"`, `"j"` `"l"`.
+- `"O"`, `"o"` and `"D"`, which can be confused with `"0"` and `"Q"`.
+- `"{"`, which can be confused with `"["` and `"("`.
+- `"}"`, which can be confused with `"]"` and `")"`.
+- `":"`, which can be confused with `";"`.
+- `"\"` and `"/"`, which combined can be confused with `"V"`. This also allows URI encoding and not to be confused with a escape character.
+- `"@"`, for looking like a blob in some type fonts.
+- ``"`"``, `"'"`, `'"'`, `"*"` and `"^"` which are too small and may not be legible in silkscreen.
+- `" "`, for being a non-printable character.
+- `"~"`, which can be confused with `"-"`. No longer used as a prefix, see Use of tilde prefix section for further information.
 
 ### Description of fields
 
 The PCBID code consists of six fields:
-- Author: Identifier of the person or organization developing the PCB.
-- Project: Identifier of the project developed by the author.
-- Module: Numbering of the board number that belongs to the project. The field starts with 01.
-- Release: Numbering of the release of this module. The field starts with 01.
-- Week: Week of layout of the PCB.
-- Year: Year of layout of the PCB.
+- **Author**: Identifier of the person or organization developing the PCB.
+- **Project**: Identifier of the project developed by the author.
+- **Module**: Numbering of the board that belongs to the project. Oriented for projects with more than one PCB design. The field starts with 01.
+- **Release**: Numbering of the release of this module. Any type of release increases this field. The field starts with 01.
+- **Week**: Week in which the PCB layout ends (ISO 8601 model).
+- **Year**: Year in which the PCB layout ends.
 
 The author and project identifiers are generated from the actual names of these. An algorithm transforms them into a compact and unique identifier to form the PCBID fields.
 
 :warning: By style convention intended for the readability and accuracy of the data provided, the author name and project name fields must present full names, without unnecessary abbreviations and with the correct capitalization and punctuation.
 
-The canonical structure of the fields is designed in the form of dependency, so the field on the right and successive fields are dependent on the previous field. This way the fields can be read in the opposite order: _Design date_ OF _the version_ OF _the module_ OF _the project_ OF _the author_. A change in one field forces the resetting of the successive fields.
+The canonical structure of the fields is designed in the form of dependency, so the second field and successive fields are dependent on the previous field. A change in one field forces the resetting of the successive fields. This way the fields can be read in the opposite order: _Design date_ OF _the release_ OF _the module_ OF _the project_ OF _the author_.
 
 This is how PCBID is composed:
 
-        ~aaaappppmmrrwwyy       ~}HbHgv0?01011520
-         aaaa                    }HbH               Author      Foobar Inc
-             pppp                    gv0?           Project     Foobar Project
+         aaaappppmmrrwwyy        ]S3y1%kZ01011520
+         aaaa                    ]S3y               Author      Foobar Incorporation
+             pppp                    1%kZ           Project     Foobar Project
                  mm                      01         Module      1
                    rr                      01       Release     1
                      ww                      15     Week        15
                        yy                      20   Year        2020
 
+Separated by identifiers, the _Author identifier_ (**Author ID**) is composed of the **Author** field, while the _Project identifier_ (**Project ID**) is composed of the **Author** and **Project** fields:
+
+         aaaappppmmrrwwyy        ]S3y1%kZ01011520   PCBID
+         aaaa                    ]S3y               Author ID
+         aaaapppp                ]S3y1%kZ           Project ID
+
 ### 2D Barcode
 
-The numbering of PCBIDs can also be encoded in barcode format to be added in the silkscreen of the PCB. The barcode type for PCBID coding is **datamatrix**. It is highly recommended to add the PCBID code in text in a location close to the barcode whenever possible. It works well to generate it in inverted colors and with a size in PCB not less than 6mm, as long as the color of the mask offers enough contrast.
+The numbering of PCBIDs can also be encoded in barcode format to be added in the silkscreen of the PCB. The barcode type for PCBID coding is **datamatrix**. In all cases, the use of a 2D barcode is strongly recommended, as it offers easy location on the PCB, better readability from external devices, possibility of process automation and error correction in a compact size. No other information should be encoded in the 2D barcode. It is highly recommended to add the PCBID code in plain text in a location close to the barcode whenever possible.
 
-The numbering with which the barcode is generated should not include the tilde symbol `~`, while it is recommended that it be added to the PCBID code in plain text.
+It works well to generate it in inverted colors and with a size in PCB not less than 6mm, as long as the color of the mask offers enough contrast. Remember to keep a safety contour around the 2D barcode. The generation of the 2D barcode can be done in an automatic way from external tools.
 
-### When should I generate it?
+### Use of tilde prefix
+
+:warning: The use of the tilde has changed in the third draft of PCBID V2.0. This breaks the compatibility with previous versions and the external tools that handled the previous version.
+
+The tilde symbol `~` was used as a prefix in PCBID to indicate that a text string is a PCBID number and thus distinguish it from arbitrary looking text strings. Its use is now deprecated.
+
+### When it should be generated?
 
 In order for the date embedded in the PCBID code to be valid, it must be generated and inserted once the PCB is finished, at the moment prior to generating the manufacturing files. This code will be valid and should not be updated until the next change in the PCB.
 
-### How do I generate it?
+### How it is generated?
 
 Tools for PCBID generation are provided in the [PCBID Tools](https://github.com/akornsys-rdi/pcbid-tools) repository. If you are interested in creating your own generation tool or simply to know more details, you can look at the technical details section.
+
+The [PCBIDB](https://pcbidb.akornsys-rdi.net) parallel project will offer, when completed, online generation and an API for generation with external tools.
 
 ### Examples of use
 
 #### Case 1: First PCB
 
-1. Generate your author identifier from the author name you want (personal or brand name). E.g. `}HbH` for `Foobar Inc`.
-2. Generate your project identifier from the project name. E.g. `gv0?` for `Foobar Project`.
+1. Generate your author identifier from the author name you want (personal or brand name). E.g. `]S3y` for `Foobar Incorporation`.
+2. Generate your project identifier from the project name. E.g. `1%kZ` for `Foobar Project`.
 3. Set the module and release fields to `01`.
 4. Calculate the current week following the ISO 8601 model (`%V` in `date` syntax). E.g. `15` for `2020-04-11`.
 5. Add the last two digits of the year for the year field. E.g: `20` for `2020`.
-6. Concatenate the fields, this way it has to look like this: `}HbHgv0?01011520`.
-7. Insert the PCBID on the PCB. You can insert `~` at the beginning to indicate that it is a PCBID. `~}HbHgv0?01011520`.
+6. Concatenate the fields, this way it has to look like this: `]S3y1%kZ01011520`.
+7. Insert the PCBID on the PCB.
 
 #### Case 2: Second version of the PCB
 
-1. Take the PCBID that was assigned to the previous version of this PCB. E.g: `~}HbHgv0?01011520`.
-2. Increase by one unit, following the K85 charset, the release field. E.g: `~}HbHgv0?01021520`.
-3. Recalculate the date when you have completed the changes to the second version of the PCB. E.g: `~}HbHgv0?01021820`.
+1. Take the PCBID that was assigned to the previous version of this PCB. E.g: `]S3y1%kZ01011520`.
+2. Increase by one unit, following the K74 charset, the release field. E.g: `]S3y1%kZ01021520`.
+3. Recalculate the date when you have completed the changes to the second version of the PCB. E.g: `]S3y1%kZ01021820`.
 4. Insert the PCBID on the PCB.
 
 #### Case 3: New board in the same project
 
-1. Take the author and project fields you had generated from this project. E.g: `}HbHgv0?`.
-2. Increase by one unit, following the K85 charset, the module field. E.g: `02`.
+1. Take the author and project fields you had generated from this project. E.g: `]S3y1%kZ`.
+2. Increase by one unit, following the K74 charset, the module field. E.g: `02`.
 3. Restart the release field, as this is the first release of this PCB. E.g: `01`.
 4. When you have finished the design, calculate the date fields. E.g: `2120`.
-5. Concatenate the fields, this way it has to look like this: `~}HbHgv0?02012120`.
+5. Concatenate the fields, this way it has to look like this: `]S3y1%kZ02012120`.
 6. Insert the PCBID on the PCB.
 
-In this way your project with identifier `gv0?` consists of the present PCB with PCBID `~}HbHgv0?02012120` and another PCB in its second version with PCBID `~}HbHgv0?01021820`.
+### Conclusion
+
+In this way, the author Foobar Incorporation (`]S3y`) has a single project (`1%kZ`), which contains two PCBs:
+- The first PCB in its second version, with the PCBID `]S3y1%kZ01021820`.
+- The second PCB in its first version, with the PCBID `]S3y1%kZ02012120`.
 
 ### FAQ
 
@@ -111,7 +138,7 @@ In this way your project with identifier `gv0?` consists of the present PCB with
 
 > **Should I update the PCBID if I had designed a PCB and after some time I make changes, without having manufactured any unit of this PCB?**
 > 
-> No. Make all the necessary changes and keep the PCBID you have generated.
+> Yes. Make all the necessary changes and updates only the date fields if necessary.
 
 > **Can I use this system for the non-PCB housing or hardware of my project?**
 > 
@@ -123,11 +150,11 @@ In this way your project with identifier `gv0?` consists of the present PCB with
 
 > **How does the system avoid possible collisions of author or project identifiers?**
 > 
-> Collision checking can be done manually, or with external tools. In any case, automation with the implementation of PCBDB is planned. However, this is not a cause for concern since the collision of these fields is unlikely at this stage of development.
+> Collision checking is implemented in the generation tools. In the case of offline tools, it is done through a common file that stores the **Project ID** generated at the time by any author to check for collisions. The online tools use a common database that checks for collisions. In any case, collisions are very unlikely and it is reasonably safe to generate these fields without any checks for projects by the same author.
 
-> **What is PCBDB?**
+> **What is PCBIDB?**
 > 
-> It is a project related to PCBID that will be developed in the future and will allow it to be a database of the traceability events of those registered boards that use PCBID. In addition, it will allow to link specifications and useful documentation of these boards.
+> PCBIDB is a parallel project that is under development and will allow the online generation of PCBIDs and store in a database all the PCBIDs created, linking all the traceability events, change logs, documentation and other information related to each board with a PCBID.
 
 > **Can I use this system for my software projects?**
 > 
@@ -139,7 +166,7 @@ In this way your project with identifier `gv0?` consists of the present PCB with
 
 > **Why this numbering system and not any other?**
 > 
-> In the world of PCB manufacturing there are numerous numbering systems with the intention of having traceability, but none of them are standard and their scope is usually for internal use by each company or organization. Therefore, PCBID has been designed to create standard specifications that can be adopted by anyone who might be interested. In addition, this allows the creation of a database of all those using the same system (PCBDB). Of course you are free to use the system that suits you best.
+> In the world of PCB manufacturing there are numerous numbering systems with the intention of having traceability, but none of them are standard and their scope is usually for internal use by each company or organization. Therefore, PCBID has been designed to create standard specifications that can be adopted by anyone who might be interested. In addition, this allows the creation of a database of all those using the same system (PCBIDB). Of course you are free to use the system that suits you best.
 
 > **I am designing a project ecosystem consisting of several PCBs, should I change the project field or the module field for each of them?**
 > 
@@ -153,76 +180,91 @@ In this way your project with identifier `gv0?` consists of the present PCB with
 > 
 > No. All the fields that form PCBIDs are relevant and some cannot be ruled out. You can reduce the font size to the recommended minimum or if you have already done so you can consider other options, such as inserting it in two lines, or perhaps inserting it in datamatrix format. If you choose to put it on two lines, you should preferably do so in the following format:
 > 
->       aaaapppp            }HbHgv0?
+>       aaaapppp            ]S3y1%kZ
 >       mmrrwwyy            01011520
 
-> **Can I choose the author and/or project identifier using K85 alphabet?**
+> **Can I choose the author and/or project identifier using K74 alphabet?**
 > 
 > No, these fields cannot be chosen arbitrarily and must be generated from the author and project name. This process ensures unique identifiers linked to the source name and prevents collisions.
 
 ## :wrench: Technical details
 
 The PCBID generation algorithm depends on the field being generated:
-- Author and project: The author and project identifier fields are generated from the hash of the name provided. This function guarantees a correspondence between the name and the identifier, while minimizing collisions. The hash is processed to obtain a radix 85 encodable number.
-- Release and Module: These fields are the representation of the decimal number in radix 85. Since these fields will rarely exceed 09, they are kept clearly human readable.
+- Author and project: The author and project identifier fields are generated from the hash of the name provided. This function guarantees a correspondence between the name and the identifier, while minimizing collisions. The hash is processed to obtain a radix 74 encodable number.
+- Release and Module: These fields are the representation of the decimal number in radix 74. Since these fields will rarely exceed 09, they are kept clearly human readable.
 - Week and year: Two-digit decimal representation of the week and year. Without any coding, they are easy to read.
 
-All numbers in radix 85 are represented with the K85 charset, which provides a comfortable reading without possible confusion by similar characters.
+All numbers in radix 74 are represented with the K74 charset, which provides a comfortable reading without possible confusion by similar characters.
 
 The hash function chosen for the author and project name transformation is SHA256, which provides a solid hash feature. The hash transformation algorithm is performed by breaking the hash result into 32-bit chunks, and adding these chunks together. This process has proven to have better data dispersion.
 
-        SHA256("Foobar Inc")
+        SHA256("Foobar Incorporation")
                 |
                 v
-        1a623c0e36fc474e6c592a3f5578e0621dffcbd452b9fa535121a75f8017dc3b
-        1a623c0e
-              + 36fc474e
-                      + 6c592a3f
-                              + 5578e062
-                                      + 1dffcbd4
-                                              + 52b9fa53
-                                                      + 5121a75f
-                                                              + 8017dc3b
+        49d25a4f106d4dacca67b2d3e131d8e1bfbf942edf68997f1b473c4b4fee89aa
+        49d25a4f
+              + 106d4dac
+                      + ca67b2d3
+                              + e131d8e1
+                                      + bfbf942e
+                                              + df68997f
+                                                      + 1b473c4b
+                                                              + 4fee89aa
         ________________________________________________________________
-                                                              025523d7be
+                                                              0410372751
 
-The result is divided by the maximum possible value of the identifier (85⁴), and the remainder is converted to radix 85.
+The result is divided by the maximum possible value of the identifier (74⁴), and the remainder is converted to radix 74.
 
-             RADIX 10        RADIX 16        RADIX 85
-            10018346942     025523d7be      02 21 78 17 35 17
-        MOD    52200625       031c84b1         01 00 00 00 00
+             RADIX 10        RADIX 16        RADIX 74
+            17451919185     0410372751      07 63 73 25 03 55
+        MOD    29986576       01c98f10         01 00 00 00 00
         _____________________________________________________
-               48027567       02dcd7af            78 17 35 17
+               29718529       01c57801            73 25 03 55
 
-The number in radix 85 is represented using the K85 charset, forming the identifier.
+The number in radix 74 is represented using the K74 charset, forming the identifier.
 
-        78 17 35 17  ->  }HbH
+        73 25 03 55  ->  ]S3y
 
 The same process applies to the project name.
 
-In case of finding collisions with existing PCBID identifiers, `" #<NUMBER>"` is added at the end of the author or project name which causes the collision, where `<NUMBER>` will increase by one unit for each collision found. This appended is not part of the author or project name, and should not be added to the `projects.txt` file.
+In case of finding collisions with existing PCBID identifiers, `" #<NUMBER>"` is added at the end of the author or project name which causes the collision, where `<NUMBER>` will increase by one unit for each collision found. This appended is not part of the author or project name, and should not be added to collision tracking systems, such as the `projects.txt` file (used by external offline generation tools).
 
-For the author, collisions are searched only in the author identifier (first four characters of the PCBID), while for the project, collisions of the same author are searched (first eight characters of the PCBID). Therefore, the same project identifier is allowed for different authors.
+For the author, collisions are searched only in the **Author ID** (first four characters of the PCBID), while for the project, collisions of the same author are searched (**Project ID**, first eight characters of the PCBID). Therefore, the same project identifier is allowed for different authors.
 
-For example, the (new) author _Foobar Inc_ tries to generate the project identifier of _Foobar Project_. According to the `projects.txt` file, the author identifiers `}HbH` and `70@&` are already in use:
+An example of collisions would be, the (new) author _Foobar Incorporation_ tries to generate the project identifier of _Foobar Project_. According to the collision tracking system, the author identifiers `]S3y` and `2)z>` are already in use:
 
-        "Foobar Inc"     -> 1a623c0e..8017dc3b -> }HbH      --> COLLISION!
-        "Foobar Inc #1"  -> 0c2cdc00..bbc3a871 -> 70@&      --> COLLISION!
-        "Foobar Inc #2"  -> 82bef721..8a9a1815 -> \=EH      --> ASIGNED
-                                                    |
-                                                    v
-        "Foobar Project" -> 78160470..7b1566af -> ____ gv0? --> ASIGNED
+        "Foobar Incorporation"     -> 49d25a4f..4fee89aa -> ]S3y      --> COLLISION!
+        "Foobar Incorporation #1"  -> 0b311707..a5440351 -> 2)z>      --> COLLISION!
+        "Foobar Incorporation #2"  -> c09b75f3..9842a017 -> <W[g      --> ASIGNED
+                                                              |
+                                                              v
+        "Foobar Project" -> 78160470..7b1566af ->           ____ 1%kZ --> ASIGNED
 
-Thus, the assigned PCBID identifiers would be `\=EHgv0?`, since the first collision-free author identifier and the first collision-free project identifier for that author are used. Once an author has an assigned identifier, they must use it for all their projects. With the data from the previous example, the line inserted in `projects.txt' would look like this:
-
-        \=EHgv0?    ' Foobar Project @ Foobar Inc (ZZ)
+Thus, the assigned PCBID identifiers would be `<W[g1%kZ`, since the first collision-free author identifier and the first collision-free project identifier for that author are used. Once an author has an assigned identifier, they must use it for all their projects.
 
 ## :book: Version history
+
+### PCBID V2.0 3rd Draft
+
+The changes from the 2nd draft are:
+- Updated title to 3rd Draft.
+- BREAKING: changed the charset and added explanations of the ignored characters on the charset.
+- Updated the number of authors and projects possible with the new charset.
+- Added explanatory notes in Description of fields and modified paragraphs that were confusing.
+- Added description of Author ID and Project ID identifiers.
+- Updated Foobar Inc to Foobar Incorporation according to style convention.
+- Now it is recommended to use 2D barcode versus plain text.
+- Added usage notes on the 2D barcode.
+- BREAKING: Removed the use of the tilde. Added section on the Use of tilde prefix.
+- Added paragraph in the section How it is generated using the PCBIDB web.
+- Updated Examples of use to comply with the rest of the changes.
+- Rewritten the conclusion paragraph of the Examples of use.
+- Clarified FAQ answers.
+- Updated Technical details with the new charset.
 
 ### PCBID V2.0 2nd Draft
 
 The changes from the 1st draft are:
-
 - Updated title to 2nd Draft
 - Edited FAQ
 - Updated sample PCBID
